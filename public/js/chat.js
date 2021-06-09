@@ -18,6 +18,15 @@ const chat = {
 		};
 		socket.emit("chat", data);
 	},
+	/**
+	* 채팅 메세지가 항상 하단으로 고정 처리 
+	*
+	*/
+	scrollBottom : function() { 
+		const h = $(".chat .contents li").outerHeight();
+		const st = h *  $(".chat .contents li").length;
+		$(".chat .contents").scrollTop(st);
+	},
 };
 
 /** 메세지 수신 */
@@ -25,6 +34,7 @@ socket.on("chat", (data) => {
 	let html = $("#chat_template").html();
 	html = html.replace(/<%=message%>/g, data.message);
 	$(".chat .contents").append(html);
+	chat.scrollBottom();
 });
 
 $(function() {
