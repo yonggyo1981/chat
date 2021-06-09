@@ -5,6 +5,7 @@
 const socket = io();
 
 const chat = {
+	sessionId : "",
 	room : "", // 방이름 
 	userNm : "", // 사용자명
 	
@@ -13,6 +14,7 @@ const chat = {
 	*
 	*/
 	init : function() {
+		const uid = new Date().getTime();
 		let qs = {};
 		location.search.replace("?", '')
 						   .split("&")
@@ -22,7 +24,9 @@ const chat = {
 							  qs[v[0]] = v[1];
 						   });
 		this.room = qs.room || 'lobby';
-		this.userNm = qs.userNm || new Date().getTime();
+		this.userNm = qs.userNm || uid;
+		this.sessionId = "chat_" + uid;
+		
 		socket.emit('join', this.room);
 	},
 	
@@ -34,6 +38,7 @@ const chat = {
 	send : function (message) {
 		const data = {
 			room : this.room,
+			sessionId : this.sessionId,
 			userNm : this.userNm,
 			message : message,
 		};

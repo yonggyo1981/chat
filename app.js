@@ -12,27 +12,32 @@ const chatHistory = {};
 io.on("connection", (socket) => {
 	// socket.on -> 데이터 수신, socket.emit 데이터 전송
 	socket.on('chat', (arg) => {
-		//console.log("전송받은 데이터", arg);
-		chatHistory[arg.room] = chatHistory[arg.room] || [];
-		chatHistory[arg.room].push(arg);
+		socket.sessionId = socket.sessionId || arg.sessionId;
+			
+		chatHistory[socket.sessionId] = chatHistory[socket.sessionId]  || [];
+		chatHistory[socket.sessionId].push(arg);
+	
 		io.to(arg.room).emit('chat', arg);
 	});
 	
 	/** 방 참여 */
 	socket.on('join', (room) => {
-		console.log(room + "에 참여");
 		socket.join(room);
 	});
 	
 	// 방을 닫을 때 
 	let previousRooms = [];
 	socket.on("disconnecting", () => {
-		previousRooms = socket.rooms;
+	
 	});
 	// 방이 닫혔을 때 
 	socket.on("disconnect", () => {
-		console.log("current", socket.rooms);
-		console.log("prev", previousRooms);
+		/** 방이 닫히면 현재 접속자 대화 기록 후속 처리 */
+		console.log(chatHistory[socket.sessionId]);
+		
+		/** 후속 처리 */
+		delete chatHistory[socket.sessionId];
+		
 		console.log('disconnect');
 	});
 });	
