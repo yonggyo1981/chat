@@ -5,15 +5,35 @@ const path = require('path');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+
+// 채팅 기록 
+const chatHistory = {};
+
 io.on("connection", (socket) => {
 	// socket.on -> 데이터 수신, socket.emit 데이터 전송
 	socket.on('chat', (arg) => {
-		console.log("전송받은 데이터", arg);
-		io.emit('chat', arg);
+		//console.log("전송받은 데이터", arg);
+		chatHistory[arg.room] = chatHistory[arg.room] || [];
+		chatHistory[arg.room].push(arg);
+		io.to(arg.room).emit('chat', arg);
 	});
 	
-	socket.on('join', (roomNm) => {
-		
+	/** 방 참여 */
+	socket.on('join', (room) => {
+		console.log(room + "에 참여");
+		socket.join(room);
+	});
+	
+	// 방을 닫을 때 
+	let previousRooms = [];
+	socket.on("disconnecting", () => {
+		previousRooms = socket.rooms;
+	});
+	// 방이 닫혔을 때 
+	socket.on("disconnect", () => {
+		console.log("current", socket.rooms);
+		console.log("prev", previousRooms);
+		console.log('disconnect');
 	});
 });	
 

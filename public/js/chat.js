@@ -23,6 +23,7 @@ const chat = {
 						   });
 		this.room = qs.room || 'lobby';
 		this.userNm = qs.userNm || new Date().getTime();
+		socket.emit('join', this.room);
 	},
 	
 	/**
@@ -32,6 +33,7 @@ const chat = {
 	*/
 	send : function (message) {
 		const data = {
+			room : this.room,
 			userNm : this.userNm,
 			message : message,
 		};
