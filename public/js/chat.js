@@ -5,15 +5,34 @@
 const socket = io();
 
 const chat = {
-	room : "",
+	room : "", // 방이름 
+	userNm : "", // 사용자명
+	
+	/** 
+	* 페이지 접속시 방이름, 사용자 설정
+	*
+	*/
+	init : function() {
+		let qs = {};
+		location.search.replace("?", '')
+						   .split("&")
+						   .map((v) => {
+							  v = v.split("=");
+							  v[1] = decodeURIComponent(v[1]);
+							  qs[v[0]] = v[1];
+						   });
+		this.room = qs.room || 'lobby';
+		this.userNm = qs.userNm || new Date().getTime();
+	},
+	
 	/**
 	* 소켓 서버로 메세지 전송 
 	* 
 	* @param String message 전송할 메세지 
 	*/
-	send : function (message, userNm) {
+	send : function (message) {
 		const data = {
-			userNm : userNm,
+			userNm : this.userNm,
 			message : message,
 		};
 		socket.emit("chat", data);
@@ -36,6 +55,9 @@ socket.on("chat", (data) => {
 	$(".chat .contents").append(html);
 	chat.scrollBottom();
 });
+
+// 페이지 접속시 초기화 
+chat.init();
 
 $(function() {
 	$(".chat #word").keyup(function(e) {
