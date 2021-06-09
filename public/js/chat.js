@@ -51,7 +51,14 @@ const chat = {
 /** 메세지 수신 */
 socket.on("chat", (data) => {
 	let html = $("#chat_template").html();
+	let addClass = 'other';
+	if (data.userNm == chat.userNm) {
+		addClass = 'mine';
+	}
+	html = html.replace(/<%=addClass%>/g, addClass);
+	html = html.replace(/<%=userNm%>/g, data.userNm);
 	html = html.replace(/<%=message%>/g, data.message);
+	
 	$(".chat .contents").append(html);
 	chat.scrollBottom();
 });

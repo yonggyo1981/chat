@@ -8,6 +8,9 @@
 </div>
 
 <script type='text/html' id='chat_template'>
-	<li><%=message%></li>
+	<li class='<%=addClass%>'>
+		<span class='userNm'><%=userNm%></span>
+		<span class='message'><%=message%></span>
+	</li>
 </script>
 {% endblock %}

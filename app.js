@@ -11,6 +11,10 @@ io.on("connection", (socket) => {
 		console.log("전송받은 데이터", arg);
 		io.emit('chat', arg);
 	});
+	
+	socket.on('join', (roomNm) => {
+		
+	});
 });	
 
 app.set('port', process.env.PORT || 3000);
