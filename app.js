@@ -24,6 +24,13 @@ app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res, next) => {
+	res.render('main');
+});
+
+app.get('/chat', (req, res, next) => {
+	if (!req.query.room || !req.query.userNm) {
+		return res.send("<script>alert('방이름과 사용자명을 모두 입력하세요.');location.href='/';</script>");
+	}
 	return res.render('chat');
 });
 
